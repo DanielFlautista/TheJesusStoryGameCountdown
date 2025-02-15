@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuenta Regresiva Evento</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+        }
+
+        .countdown-container {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .countdown {
+            font-size: 3em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .timezone-info {
+            margin-top: 10px;
+            font-size: 1.2em;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="countdown-container">
+        <div class="countdown" id="countdown"></div>
+        <div class="timezone-info" id="timezone"></div>
+    </div>
+
+    <script>
+        function updateCountdown() {
+            const eventHourSpain = 19; // 7 PM in Spain (UTC+1)
+            const now = new Date();
+            const spainOffset = 1; // España is in UTC+1 during winter time
+
+            // Get the current time zone offset (in hours) of the user's local time zone
+            const userOffset = now.getHours() - now.getUTCHours();
+
+            // Calculate the time difference between Spain and the user's time zone
+            const timeDifference = spainOffset - userOffset;
+            
+            // Calculate the event's time in the user's time zone
+            const eventTime = new Date(now);
+            eventTime.setHours(eventHourSpain - timeDifference, 0, 0, 0);
+
+            // Update countdown
+            const interval = setInterval(function() {
+                const now = new Date();
+                const remainingTime = eventTime - now;
+
+                if (remainingTime <= 0) {
+                    clearInterval(interval);
+                    document.getElementById("countdown").innerHTML = "¡El evento ha comenzado!";
+                } else {
+                    const hours = Math.floor((remainingTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((remainingTime % (1000 * 60)) / 1000);
+                    document.getElementById("countdown").innerHTML = `${hours}h ${minutes}m ${seconds}s`;
+                }
+            }, 1000);
+
+            // Display user's local time zone
+            const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+            document.getElementById("timezone").innerHTML = `Hora local: ${timezone}`;
+        }
+
+        updateCountdown();
+    </script>
+
+</body>
+</html>
